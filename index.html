@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atasha 🤍</title>
+
+<style>
+body {
+  margin:0;
+  height:100vh;
+  overflow:hidden;
+  background: linear-gradient(#fce8d5, #ffe4c4);
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Polaroid frames */
+.polaroid {
+  position:fixed;
+  width:140px;
+  height:140px;
+  background:white;
+  box-shadow:0 5px 15px rgba(0,0,0,0.25);
+  border-radius:6px;
+  overflow:hidden;
+  top:50%;
+  left:50%;
+  transform-origin:center;
+  opacity:0.9;
+}
+
+.polaroid img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+@keyframes floatPolaroid {
+  0% {transform: translate(0px,0px) rotate(0deg);}
+  25% {transform: translate(30px,-40px) rotate(5deg);}
+  50% {transform: translate(-20px,-70px) rotate(-5deg);}
+  75% {transform: translate(15px,-30px) rotate(3deg);}
+  100% {transform: translate(0px,0px) rotate(0deg);}
+}
+
+/* Floating hearts */
+.heart {
+  position:fixed;
+  font-size:20px;
+  animation: float 4s linear infinite;
+}
+
+@keyframes float {
+  0% {transform: translateY(0); opacity:1;}
+  100% {transform: translateY(-100vh); opacity:0;}
+}
+
+/* Envelope (now much bigger) */
+.envelope {
+  position:fixed;
+  top:10%;
+  left:50%;
+  transform: translateX(-50%);
+  width:500px;     /* BIG width */
+  height:400px;    /* BIG height */
+  background:#f8d7c4;
+  border-radius:20px;
+  box-shadow:0 12px 30px rgba(0,0,0,0.3);
+  cursor:pointer;
+  z-index:10;
+  perspective: 1000px;
+}
+
+.flap {
+  position:absolute;
+  width:0; height:0;
+  border-left:250px solid transparent;  /* half of envelope width */
+  border-right:250px solid transparent;
+  border-top:180px solid #f2b8a2;
+  top:0;
+  left:0;
+  transform-origin:top;
+  transition:1s;
+}
+
+.letter {
+  position:absolute;
+  width:460px;    /* slightly smaller than envelope width */
+  height:340px;   /* slightly smaller than envelope height */
+  background:white;
+  top:30px;
+  left:20px;
+  border-radius:12px;
+  padding:25px;
+  opacity:0;
+  transform: translateY(100px);
+  transition:1s;
+  overflow:hidden;
+  text-align:center;
+}
+
+.envelope.open .flap {
+  transform: rotateX(180deg);
+}
+
+.envelope.open .letter {
+  transform: translateY(0px);
+  opacity:1;
+}
+
+/* Buttons inside letter */
+button {
+  background:#e89f71;
+  border:none;
+  padding:12px 20px;
+  border-radius:20px;
+  color:white;
+  font-size:16px;
+  margin:8px;
+  cursor:pointer;
+  z-index:12;
+  position:relative;
+}
+
+button:hover {background:#d9895b;}
+
+/* Secret Love Letter */
+#secret {
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(255, 250, 245, 0.95);
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  padding:40px;
+  text-align:center;
+  animation: fadeIn 2s forwards;
+  backdrop-filter: blur(6px);
+  z-index:20;
+}
+
+@keyframes fadeIn {
+  from {opacity:0;}
+  to {opacity:1;}
+}
+
+#secret h1 {color:#d9895b;}
+</style>
+</head>
+
+<body>
+
+<!-- Background music -->
+<audio id="bgm" loop autoplay>
+  <source src="music.mp3" type="audio/mp3">
+</audio>
+
+<!-- Polaroid frames -->
+<div class="polaroid" id="pol1"><img src="photo1.jfif"></div>
+<div class="polaroid" id="pol2"><img src="photo2.jfif"></div>
+<div class="polaroid" id="pol3"><img src="photo3.jfif"></div>
+
+<!-- Envelope -->
+<div class="envelope" id="envelope" onclick="openEnvelope()">
+  <div class="flap"></div>
+  <div class="letter" id="letter">
+    <h2>Dear Atasha 💌</h2>
+    <p>You drive me crazy both figuratively and literally, but I wouldn’t want it any other way.<br>
+    I will always choose you, and always want it to be you.<br><br>
+    So this February 14, would you be my Valentine?</p>
+    <button onclick="yes(event)">Yes 🤍</button>
+    <button id="noBtn" onclick="moveNo(event)">No 😏</button>
+  </div>
+</div>
+
+<!-- Secret Love Letter -->
+<div id="secret">
+  <h1>For Atasha</h1>
+  <p>
+    You have a way of turning ordinary moments into something unforgettable.<br>
+    Out relationship may not be perfect, but I will always try my best. <br><br>
+    Thank you for being patient with me, for laughing with me,<br>
+    and for choosing me every day.<br><br>
+    I don’t promise perfection, but I do promise honesty, loyalty,<br>
+    and a heart that will always come back to you.
+  </p>
+  <h2>I love you.</h2>
+</div>
+
+<script>
+// Polaroid animation
+const pols = document.querySelectorAll('.polaroid');
+pols.forEach((pol,i)=>{
+  pol.style.animation = `floatPolaroid ${8+i*2}s ease-in-out infinite`;
+  pol.style.top = `${20 + Math.random()*60}%`;
+  pol.style.left = `${10 + Math.random()*80}%`;
+});
+
+// Envelope opening
+function openEnvelope() {
+  document.getElementById('envelope').classList.add('open');
+  document.getElementById('bgm').play();
+  floatingHearts();
+}
+
+// Floating hearts
+function floatingHearts() {
+  setInterval(()=>{
+    const h = document.createElement('div');
+    h.className = 'heart';
+    h.innerHTML = '🤍';
+    h.style.left = Math.random()*100 + 'vw';
+    h.style.fontSize = (Math.random()*25 + 15) + 'px';
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),4000);
+  },400);
+}
+
+// YES button
+function yes(e) {
+  e.stopPropagation();
+  alert("you cant say no love hehe");
+  for(let i=0;i<150;i++){
+    const h = document.createElement('div');
+    h.className = 'heart';
+    h.innerHTML = '💞';
+    h.style.left = Math.random()*100 + 'vw';
+    h.style.fontSize = (Math.random()*30 + 20) + 'px';
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),4000);
+  }
+  setTimeout(()=>{
+    document.getElementById('secret').style.display='flex';
+  },1500);
+}
+
+// NO button moves playfully
+function moveNo(e) {
+  e.stopPropagation();
+  const b = document.getElementById('noBtn');
+  b.style.position="absolute";
+  b.style.left = Math.random()*60 + 'vw';
+  b.style.top = Math.random()*60 + 'vh';
+}
+</script>
+
+</body>
+</html>
